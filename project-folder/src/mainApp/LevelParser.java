@@ -1,7 +1,8 @@
 package mainApp;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,11 +15,12 @@ public class LevelParser {
 
 	public LevelData parseFile(String inputFileName) throws InvalidLevels {
 		ArrayList<String> lines = new ArrayList<>();
-		try (Scanner scanner = new Scanner(new FileReader(inputFileName))) {
+		try (InputStream inputStream = ResourceLocator.openStream(inputFileName);
+				Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8)) {
 			while (scanner.hasNextLine()) {
 				lines.add(scanner.nextLine());
 			}
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			throw new IllegalStateException("File not found: " + inputFileName, e);
 		}
 		return parseLines(lines);

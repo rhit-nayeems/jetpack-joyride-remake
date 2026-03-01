@@ -14,7 +14,7 @@ public class ScoreManager {
 	private int bestScore;
 
 	public ScoreManager() {
-		this(Path.of("best_score.txt"));
+		this(ResourceLocator.resolveWritablePath("best_score.txt"));
 	}
 
 	public ScoreManager(Path scoreFilePath) {

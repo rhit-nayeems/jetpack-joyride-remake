@@ -5,8 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -29,10 +29,13 @@ public class Hero extends GameObject {
 		this.restartQueued = false;
 		this.animationTick = 0;
 		resetState(gameComponent.getDifficulty().getStartingLives());
-		try {
-			barryImage = ImageIO.read(new File("barry.png"));
+		try (InputStream imageStream = ResourceLocator.openStream("barry.png")) {
+			barryImage = ImageIO.read(imageStream);
+			if (barryImage == null) {
+				System.err.println("Unable to load barry.png from classpath or working directory.");
+			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Unable to load barry.png from classpath or working directory.");
 		}
 	}
 
@@ -209,3 +212,5 @@ public class Hero extends GameObject {
 		resetState(6);
 	}
 }
+
+

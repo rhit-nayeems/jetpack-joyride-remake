@@ -8,8 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -66,13 +66,13 @@ public class GameComponent extends JComponent {
 	}
 
 	private void loadBackgroundImage() {
-		try {
-			backGroundImage = ImageIO.read(new File("backgroundCropped.png"));
+		try (InputStream imageStream = ResourceLocator.openStream("backgroundCropped.png")) {
+			backGroundImage = ImageIO.read(imageStream);
 			if (backGroundImage == null) {
-				System.out.println("Image not found!");
+				System.err.println("Unable to load backgroundCropped.png from classpath or working directory.");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Unable to load backgroundCropped.png from classpath or working directory.");
 		}
 	}
 
@@ -465,6 +465,8 @@ public class GameComponent extends JComponent {
 		repaint();
 	}
 }
+
+
 
 
 
