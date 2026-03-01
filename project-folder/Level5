@@ -1,0 +1,14 @@
+# Missiles [type] [x] [y]
+missile non-tracking 50 100
+missile non-tracking 50 350
+missile tracking 0 250
+missile sin 100 100
+missile sin 100 350
+missile random 200 100
+missile random 200 350
+
+# Barriers [type] [x1] [y1] [x2] [y2]
+barrier laser 100 450 0 0
+barrier laser 300 100 0 0
+barrier laser 500 300 0 0
+barrier laser 700 200 0 0

@@ -1,0 +1,31 @@
+# Lasers
+#[type] [delay] [y1] [0] [0] 
+barrier l 20 440 0 0
+barrier l 120 300 0 0
+barrier l 200 350 0 0
+barrier l 200 200 0 0 
+barrier l 240 450 0 0
+barrier l 320 300 0 0
+barrier l 320 100 0 0
+barrier l 320 450 0 0
+barrier l 400 60 0 0
+
+barrier l 530 450 0 0 
+barrier l 550 420 0 0 
+barrier l 570 390 0 0 
+barrier l 590 360 0 0 
+barrier l 610 330 0 0 
+barrier l 630 300 0 0 
+barrier l 650 270 0 0 
+barrier l 670 240 0 0 
+
+barrier l 670 60 0 0
+barrier l 690 90 0 0
+barrier l 710 120 0 0
+barrier l 730 150 0 0
+
+
+#Coins [x] [y]
+
+
+

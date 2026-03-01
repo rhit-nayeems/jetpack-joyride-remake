@@ -1,0 +1,57 @@
+# Barriers 
+#[type] [x1] [y1] [x2] [y2]
+barrier e 50 100 440 100
+barrier n 150 200 180 280
+barrier e 100 370 240 370
+barrier e 310 450 350 410
+barrier n 390 250 390 320
+barrier n 500 400 500 490
+barrier n 540 270 580 320
+barrier e 550 200 870 20
+barrier e 610 440 660 415
+barrier n 700 210 740 120
+barrier e 800 260 875 320
+barrier n 790 440 920 410
+
+#Coins [x] [y]
+coin 150 320
+coin 165 320
+coin 180 320
+
+coin 150 335
+coin 165 335
+coin 180 335
+
+coin 300 280
+coin 315 280
+coin 330 280
+
+coin 300 295
+coin 315 295
+coin 330 295
+
+coin 450 310
+coin 465 310
+coin 480 310
+
+coin 450 325
+coin 465 325
+coin 480 325
+
+
+coin 600 210
+coin 615 210
+coin 630 210
+
+coin 600 225
+coin 615 225
+coin 630 225
+
+coin 690 310
+coin 705 310
+coin 720 310
+
+coin 690 325
+coin 705 325
+coin 720 325
+

@@ -1,0 +1,44 @@
+# Barriers 
+#[type] [x1] [y1] [x2] [y2]
+barrier e 70 169 300 280
+barrier r 320 350 300 300
+barrier e 400 100 460 180
+barrier e 420 430 480 400
+barrier n 620 200 620 250
+barrier e 700 390 780 320
+barrier r 820 120 850 180
+
+
+
+# Missiles [type] [x] [y]
+missile non-tracking 60 430
+missile random 100 250
+missile tracking 280 260
+
+#Coins [x] [y]
+coin 500 250
+coin 500 270
+coin 500 290
+coin 500 310
+coin 500 330
+
+coin 480 270
+coin 480 290
+coin 480 310
+
+coin 520 270
+coin 520 290
+coin 520 310
+
+coin 460 290
+
+coin 540 290
+
+
+coin 900 380
+coin 920 380
+coin 940 380
+coin 920 400
+coin 920 360
+
+

@@ -1,0 +1,145 @@
+# Missiles [type] [x] [y]
+missile non-tracking 50 100
+missile non-tracking 50 350
+missile tracking 0 250
+missile sin 100 100
+missile sin 100 350
+missile random 200 100
+missile random 200 350
+
+# Barriers [type] [x1] [y1] [x2] [y2]
+barrier laser 100 450 0 0
+barrier laser 300 100 0 0
+barrier laser 500 300 0 0
+barrier laser 700 200 0 0
+
+#Coins [x] [y]
+
+
+
+#circle 1
+coin 770 250
+coin 766 269
+coin 755 285
+coin 739 296
+coin 720 300
+coin 700 296
+coin 684 285
+coin 673 269
+coin 670 250
+coin 673 230
+coin 684 214
+coin 700 203
+coin 720 200
+coin 739 203
+coin 755 214
+coin 766 230
+
+#circle 2
+coin 220 250
+coin 216 269
+coin 205 285
+coin 189 296
+coin 170 300
+coin 150 296
+coin 134 285
+coin 123 269
+coin 120 250
+coin 123 230
+coin 134 214
+coin 150 203
+coin 170 200
+coin 189 203
+coin 205 214
+coin 216 230
+
+#circle 3
+coin 530 200
+coin 526 219
+coin 515 235
+coin 499 246
+coin 480 250
+coin 460 246
+coin 444 235
+coin 433 219
+coin 430 200
+coin 433 180
+coin 444 164
+coin 460 153
+coin 480 150
+coin 499 153
+coin 515 164
+coin 526 180
+
+#top triangles
+coin 180 25
+coin 170 45
+coin 190 45
+coin 160 65
+coin 180 65
+coin 200 65
+
+coin 330 25
+coin 320 45
+coin 340 45
+coin 310 65
+coin 330 65
+coin 350 65
+
+coin 480 25
+coin 470 45
+coin 490 45
+coin 460 65
+coin 480 65
+coin 500 65
+
+coin 630 25
+coin 620 45
+coin 640 45
+coin 610 65
+coin 630 65
+coin 650 65
+
+coin 780 25
+coin 770 45
+coin 790 45
+coin 760 65
+coin 780 65
+coin 800 65
+
+#bottom triangles
+
+coin 180 370
+coin 170 390
+coin 190 390
+coin 160 410
+coin 180 410
+coin 200 410
+
+coin 330 370
+coin 320 390
+coin 340 390
+coin 310 410
+coin 330 410
+coin 350 410
+
+coin 480 370
+coin 470 390
+coin 490 390
+coin 460 410
+coin 480 410
+coin 500 410
+
+coin 630 370
+coin 620 390
+coin 640 390
+coin 610 410
+coin 630 410
+coin 650 410
+
+coin 780 370
+coin 770 390
+coin 790 390
+coin 760 410
+coin 780 410
+coin 800 410
