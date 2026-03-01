@@ -5,7 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Class: Missile Purpose: Generates and controls missile behavior
+ * Class: Missile
+ * Purpose: generates and controls missile behavior
  */
 public class Missile extends GameObject {
 
@@ -18,10 +19,11 @@ public class Missile extends GameObject {
 	private double initialY;
 	private double delay;
 	private double counter;
+	private double difficultySpeedMultiplier;
 
 	/**
 	 * ensures: constructs missile
-	 * 
+	 *
 	 * @param gameComponent
 	 * @param delay
 	 * @param y
@@ -31,6 +33,25 @@ public class Missile extends GameObject {
 		this.initialY = y;
 		this.delay = delay;
 		this.counter = 0;
+		this.difficultySpeedMultiplier = 1.0;
+	}
+
+	/**
+	 * ensures: applies difficulty speed multipliers to missile movement
+	 *
+	 * @param preset
+	 */
+	public void applyDifficulty(DifficultyPreset preset) {
+		if (preset == null) {
+			this.difficultySpeedMultiplier = 1.0;
+		} else {
+			this.difficultySpeedMultiplier = preset.getMissileSpeedMultiplier();
+		}
+		this.xVelocity = MISSILE_X_VELOCITY * this.difficultySpeedMultiplier;
+	}
+
+	protected double getDifficultySpeedMultiplier() {
+		return this.difficultySpeedMultiplier;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 package mainApp;
 
 /**
- * Class: SinMissile 
+ * Class: SinMissile
  * Purpose: implements the sin wave missile
  */
 public class SinMissile extends Missile {
@@ -12,7 +12,7 @@ public class SinMissile extends Missile {
 
 	/**
 	 * ensures: constructs the sin wave missile
-	 * 
+	 *
 	 * @param gameComponent
 	 * @param x
 	 * @param y
@@ -28,7 +28,8 @@ public class SinMissile extends Missile {
 	 * ensures: updates the missile's position based on a sin wave function
 	 */
 	public void update() {
-		this.setY(yPlane + amplitude * Math.sin(updateCounter * 0.05));
+		double freq = 0.05 * getDifficultySpeedMultiplier();
+		this.setY(yPlane + amplitude * Math.sin(updateCounter * freq));
 		super.update();
 		this.updateCounter++;
 	}

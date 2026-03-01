@@ -1,0 +1,222 @@
+@startuml
+' Jetpack Joyride Java Remake - high-level class design
+
+title Jetpack Joyride Java Remake - Class Design
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+left to right direction
+
+class JComponent <<Java>>
+interface ActionListener <<Java>>
+interface KeyListener <<Java>>
+class Exception <<Java>>
+
+package mainApp {
+
+class MainApp {
+  +{static} DELAY : int
+  +main(args : String[]) : void
+}
+
+class GameMenu {
+  -frame : JFrame
+  -startButton : JButton
+  -difficultySelector : JComboBox<DifficultyPreset>
+}
+
+class GameAdvanceListener {
+  -gameComponent : GameComponent
+  +actionPerformed(e) : void
+  +advanceOneTick() : void
+}
+
+class PressListener {
+  -gameComponent : GameComponent
+  +keyTyped(e) : void
+  +keyPressed(e) : void
+  +keyReleased(e) : void
+}
+
+enum GameState {
+  RUNNING
+  PAUSED
+  GAME_OVER
+  GAME_WON
+}
+
+enum DifficultyPreset {
+  EASY
+  NORMAL
+  HARD
+  +getStartingLives() : int
+  +getMissileSpeedMultiplier() : double
+  +getObstacleDensityMultiplier() : double
+}
+
+class GameComponent {
+  -hero : Hero
+  -levelConstructor : LevelConstructor
+  -scoreManager : ScoreManager
+  -soundManager : SoundManager
+  -gameState : GameState
+  -difficulty : DifficultyPreset
+  -proceduralEnabled : boolean
+  -objBarriers : ArrayList<Barrier>
+  -objCoins : ArrayList<Coin>
+  -objMissiles : ArrayList<Missile>
+  +startNewGame() : void
+  +updateState() : void
+  +changeLevel(levelData : LevelData) : void
+  +advanceToNextLevel() : void
+  +restartCurrentLevelAfterDeath() : void
+  +togglePause() : void
+}
+
+class LevelConstructor {
+  +{static} MIN_LEVEL : int
+  +{static} CAMPAIGN_MAX_LEVEL : int
+  -component : GameComponent
+  -parser : LevelParser
+  -proceduralGenerator : ProceduralLevelGenerator
+  -levelNum : int
+  +changeLevel(levelChange : int) : void
+  +advanceLevel() : boolean
+  +reloadCurrentLevel() : void
+  +loadLevel(targetLevel : int) : void
+}
+
+class LevelParser {
+  +parseFile(inputFileName : String) : LevelData
+  +parseLines(lines : List<String>) : LevelData
+}
+
+class LevelData {
+  -barriers : ArrayList<String>
+  -coins : ArrayList<String>
+  -missiles : ArrayList<String>
+  +addBarrier(line : String) : void
+  +addCoin(line : String) : void
+  +addMissile(line : String) : void
+}
+
+class ProceduralLevelGenerator {
+  +generate(level : int, difficulty : DifficultyPreset, width : int, height : int) : LevelData
+}
+
+class InvalidLevels
+
+class ScoreManager {
+  -bestScore : int
+  +calculateScore(hero : Hero, currentLevel : int, numTicks : int) : int
+  +registerScore(score : int) : void
+  +getBestScore() : int
+}
+
+class SoundManager {
+  +playCoin() : void
+  +playHit() : void
+  +playGameOver() : void
+  +playLevelUp() : void
+  +playPauseToggle() : void
+}
+
+abstract class GameObject {
+  #gameComponent : GameComponent
+  #xVelocity : double
+  #yVelocity : double
+  +drawOn(g2) : void
+  +update() : void
+  +overlaps(other : GameObject) : boolean
+}
+
+class Hero {
+  +flyUp() : void
+  +stopFlying() : void
+  +die() : void
+  +resetState(lives : int) : void
+}
+
+class Barrier {
+  +getLineObj() : Line2D.Double
+}
+
+class ElectricBarrier
+class RotatingBarrier
+class Laser
+
+class Coin
+
+class Missile {
+  +applyDifficulty(preset : DifficultyPreset) : void
+}
+class TrackingMissile
+class SinMissile
+class RandomMissile
+
+}
+
+' Inheritance / interface implementation
+JComponent <|-- GameComponent
+ActionListener <|.. GameAdvanceListener
+KeyListener <|.. PressListener
+Exception <|-- InvalidLevels
+
+GameObject <|-- Hero
+GameObject <|-- Barrier
+GameObject <|-- Coin
+GameObject <|-- Missile
+
+Barrier <|-- ElectricBarrier
+Barrier <|-- RotatingBarrier
+Barrier <|-- Laser
+
+Missile <|-- TrackingMissile
+Missile <|-- SinMissile
+Missile <|-- RandomMissile
+
+' Core composition/associations
+MainApp --> GameComponent
+MainApp --> GameMenu
+GameMenu --> GameComponent
+GameMenu --> GameAdvanceListener
+GameMenu --> PressListener
+
+GameAdvanceListener --> GameComponent
+PressListener --> GameComponent
+
+GameComponent *-- Hero
+GameComponent *-- LevelConstructor
+GameComponent *-- ScoreManager
+GameComponent *-- SoundManager
+GameComponent o-- "0..*" Barrier
+GameComponent o-- "0..*" Coin
+GameComponent o-- "0..*" Missile
+GameComponent --> DifficultyPreset
+GameComponent --> GameState
+
+LevelConstructor --> GameComponent
+LevelConstructor *-- LevelParser
+LevelConstructor *-- ProceduralLevelGenerator
+LevelConstructor --> LevelData
+
+LevelParser --> LevelData
+LevelParser ..> InvalidLevels : throws
+ProceduralLevelGenerator --> LevelData
+ProceduralLevelGenerator --> DifficultyPreset
+ScoreManager --> Hero : score input
+Missile --> DifficultyPreset
+
+note right of LevelConstructor
+Loads campaign levels via LevelParser,
+and procedural levels after campaign max.
+end note
+
+note right of GameComponent
+Central runtime coordinator:
+- game loop state
+- rendering + HUD
+- collision/update orchestration
+end note
+
+@enduml

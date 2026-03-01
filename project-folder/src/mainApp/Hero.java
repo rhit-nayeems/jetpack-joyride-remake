@@ -1,81 +1,65 @@
 package mainApp;
 
-import java.awt.AWTException;
 import java.awt.Color;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import java.awt.Graphics2D;
-
 public class Hero extends GameObject {
-
-	// TODO: Implement horizontal and vertical movement
 
 	private static final double HERO_WIDTH = 30;
 	private static final double HERO_HEIGHT = 40;
 	private static final Color HERO_COLOR = Color.BLACK;
+
 	private int numLives;
 	private int numCoins;
-	private Robot robot;
-	private Toolkit toolkit;
 	private BufferedImage barryImage;
 	private double bounceTravel;
-	private long lastDeathTime = 0;
-	private static final long DEATH_COOLDOWN = 1000;
-	
+	private boolean restartQueued;
+	private int animationTick;
 
 	public Hero(GameComponent gameComponent, double xVel, double yVel) {
 		super(gameComponent, 0, 410, xVel, yVel, HERO_WIDTH, HERO_HEIGHT, HERO_COLOR);
-		numLives = 6;
-		numCoins = 0;
 		this.bounceTravel = 0;
-		try {
-			robot = new Robot();
-			toolkit = Toolkit.getDefaultToolkit();
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.restartQueued = false;
+		this.animationTick = 0;
+		resetState(gameComponent.getDifficulty().getStartingLives());
 		try {
 			barryImage = ImageIO.read(new File("barry.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public void addCoin() {
 		numCoins++;
+		gameComponent.getSoundManager().playCoin();
 	}
 
 	public void die() {
-		// fixes losing two lives at once by cooling down
-		long currentTime = System.currentTimeMillis();
-		if (currentTime - lastDeathTime < DEATH_COOLDOWN) {
+		if (restartQueued || !gameComponent.isRunning()) {
 			return;
 		}
-		lastDeathTime = currentTime;
-		numLives--;
 
+		numLives--;
 		System.out.println("Lost Life! " + numLives + " lives remaining.");
+
 		if (numLives <= 0) {
 			numLives = 0;
+			restartQueued = false;
 			gameComponent.setGameOver(true);
 		} else {
 			this.bounceTravel = 0;
 			this.xVelocity = 1;
+			this.yVelocity = 1;
 			this.numCoins = 0;
-			// trigger the reset key
-			robot.keyPress(KeyEvent.VK_R);
-			robot.delay(100);
-			robot.keyRelease(KeyEvent.VK_R);
-			// System.out.println("Robot pressed key");
+			restartQueued = true;
+			gameComponent.getSoundManager().playHit();
 		}
 	}
 
@@ -95,16 +79,38 @@ public class Hero extends GameObject {
 
 	@Override
 	public void drawOn(Graphics2D g2) {
+		double bobOffset = Math.sin(animationTick * 0.2) * 2;
+		double tilt = Math.max(-0.35, Math.min(0.35, -this.yVelocity * 0.12));
+		AffineTransform originalTransform = g2.getTransform();
+		g2.translate(getX() + getWidth() / 2.0, getY() + getHeight() / 2.0 + bobOffset);
+		g2.rotate(tilt);
+
 		if (barryImage != null) {
-			g2.drawImage(barryImage, (int) getX(), (int) getY(), (int) getWidth(), (int) getHeight(), null);
+			g2.drawImage(barryImage, -(int) (getWidth() / 2.0), -(int) (getHeight() / 2.0), (int) getWidth(),
+					(int) getHeight(), null);
 		} else {
 			g2.setColor(HERO_COLOR);
-			g2.fill(this.getBoundingBox());
+			g2.fillRect(-(int) (getWidth() / 2.0), -(int) (getHeight() / 2.0), (int) getWidth(), (int) getHeight());
 		}
+
+		if (this.yVelocity < 0) {
+			int flamePulse = 6 + (int) (Math.abs(Math.sin(animationTick * 0.45)) * 8);
+			int[] xPoints = new int[] { -(int) (getWidth() / 2.0) - 2, -(int) (getWidth() / 2.0) - flamePulse,
+					-(int) (getWidth() / 2.0) - 2 };
+			int[] yPoints = new int[] { -6, 0, 6 };
+			Polygon flame = new Polygon(xPoints, yPoints, 3);
+			g2.setColor(new Color(255, 140, 0));
+			g2.fillPolygon(flame);
+			g2.setColor(new Color(255, 220, 80));
+			g2.drawPolygon(flame);
+		}
+
+		g2.setTransform(originalTransform);
 	}
 
 	@Override
 	public void update() {
+		animationTick++;
 		super.update();
 		if (this.bounceTravel >= 50) {
 			this.xVelocity = 1;
@@ -130,47 +136,53 @@ public class Hero extends GameObject {
 			this.reverseDirection();
 		}
 
-		for (Coin c : this.gameComponent.getCoins()) {
-			if (this.overlaps(c)) {
+		for (Coin coin : this.gameComponent.getCoins()) {
+			if (this.overlaps(coin)) {
 				this.addCoin();
-				gameComponent.addRemoveCoin(c);
-				// System.out.println("Coins Collected: " + numCoins);
-
+				gameComponent.addRemoveCoin(coin);
 			}
 		}
 
-		for (Missile m : this.gameComponent.getMissiles()) {
-			if (this.overlaps(m)) {
+		for (Missile missile : this.gameComponent.getMissiles()) {
+			if (this.overlaps(missile)) {
 				die();
+				break;
 			}
 		}
 
-		// System.out.println("Block is at " + this.getX() + this.getWidth() + "Which is
-		// greater than " + gameComponent.getWidth());
-		if (this.getX() + this.getWidth() >= gameComponent.getWidth() - 1) {
-			// System.out.println("Reached end");
-			robot.keyPress(KeyEvent.VK_U);
-			robot.delay(100);
-			robot.keyRelease(KeyEvent.VK_U);
+		if (restartQueued) {
+			consumeQueuedRestart();
+			return;
 		}
 
-		for (Barrier b : this.gameComponent.getBarriers()) {
-			if (this.getBoundingBox().intersectsLine(b.getLineObj())) {
-				if (b.getColor().equals(Color.ORANGE) || b.getColor().equals(Color.RED)) {
+		if (this.gameComponent.getWidth() > 0 && this.getX() + this.getWidth() >= gameComponent.getWidth() - 1) {
+			gameComponent.advanceToNextLevel();
+			return;
+		}
+
+		for (Barrier barrier : this.gameComponent.getBarriers()) {
+			if (this.getBoundingBox().intersectsLine(barrier.getLineObj())) {
+				if (barrier.getColor().equals(Color.ORANGE) || barrier.getColor().equals(Color.RED)) {
 					die();
-//				} else if (atYLimits()) {
-//					this.reverseDirection();
-//					super.update();
-//					this.reverseDirection();
+					break;
 				} else {
 					this.bounceBack();
 				}
 			}
-			// kill condition for lasers
-			if (this.overlaps(b) && b.getColor().equals(Color.RED)) {
+			if (this.overlaps(barrier) && barrier.getColor().equals(Color.RED)) {
 				die();
+				break;
 			}
 		}
+
+		if (restartQueued) {
+			consumeQueuedRestart();
+		}
+	}
+
+	private void consumeQueuedRestart() {
+		restartQueued = false;
+		gameComponent.restartCurrentLevelAfterDeath();
 	}
 
 	public int getNumLives() {
@@ -181,11 +193,19 @@ public class Hero extends GameObject {
 		return numCoins;
 	}
 
-	public void resetState() {
-		this.numLives = 6; 
-		this.numCoins = 0; 
-		this.setX(0); 
+	public void resetState(int lives) {
+		this.numLives = Math.max(1, lives);
+		this.numCoins = 0;
+		this.setX(0);
 		this.setY(410);
+		this.xVelocity = 1;
+		this.yVelocity = 1;
+		this.bounceTravel = 0;
+		this.restartQueued = false;
+		this.animationTick = 0;
 	}
-	
+
+	public void resetState() {
+		resetState(6);
+	}
 }
